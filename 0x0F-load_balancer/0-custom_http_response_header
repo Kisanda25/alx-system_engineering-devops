@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Configures the Nginx so that the HTTP response contains a custom header.
+
+sudo apt-get update
+sudo apt-get -y install nginx
+
+# configures the firewall to allow requests
+sudo ufw allow 'Nginx HTTP'
+
+sudo mkdir -p /var/www/html
+
+# changes the permissions to allow us to create files in this directory
+sudo chmod -R 755 /var/www
+
+#  create the index page
+echo 'Hi Whats up!' |sudo tee  /var/www/html/index.html
+
+# create error 404
+echo "This is not a webpage" |sudo tee /var/www/html/404.html
+
+# redirect for a single page and adds the header to display hostname
+string_for_replacement="server_name _;\n\tadd_header X-Served-By \$hostname;\n\trewrite ^\/redirect_me https:\/\/https://intranet.alxswe.com permanent;"
+sudo sed -i "s/server_name _;/$string_for_replacement/" /etc/nginx/sites-enabled/default
+
+#  redirect for 404 error page
+string_for_replacement="listen 80 default_server;\n\terror_page 404 \/404.html;\n\tlocation = \/404.html {\n\t\troot \/var\/www\/html;\n\t\tinternal;\n\t}"
+sudo sed -i "s/listen 80 default_server;/$string_for_replacement/" /etc/nginx/sites-enabled/default
+
+# restarts the web server after updating settings
+sudo service nginx restart
