@@ -1,5 +1,7 @@
 #!/usr/bin/python3
-"""queries the Reddit API, parses the title of all hot articles, and prints a sorted count"""
+"""queries the Reddit API, parses the title of all hot articles,
+   and prints a sorted count
+"""
 
 import json
 import requests
